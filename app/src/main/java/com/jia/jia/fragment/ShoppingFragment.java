@@ -10,13 +10,27 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.blankj.utilcode.util.CacheUtils;
+import com.blankj.utilcode.util.LogUtils;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.jia.jia.GlideImageLoader;
+import com.jia.jia.MyApplication;
 import com.jia.jia.R;
+import com.jia.jia.activity.DetailsActivity;
 import com.jia.jia.activity.ResultActivity;
+import com.jia.jia.module.Goods;
+import com.jia.jia.module.Response;
+import com.jia.jia.module.User;
 import com.youth.banner.Banner;
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
 
 /**
  * Created by linSir
@@ -30,6 +44,7 @@ public class ShoppingFragment extends Fragment {
     private Banner banner;
     private ImageView search;
     private EditText editText;
+    private ImageView imageView1;
 
     @Nullable
     @Override
@@ -39,6 +54,8 @@ public class ShoppingFragment extends Fragment {
 
         editText = view.findViewById(R.id.edit_text);
         search = view.findViewById(R.id.search);
+        imageView1 = view.findViewById(R.id.image_view1);
+
 
         search.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,6 +65,51 @@ public class ShoppingFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+        imageView1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                OkHttpUtils
+                        .get()
+                        .url(MyApplication.baseUrl + "item/getItemDetail.do")
+                        .addParams("itemId", "2172387431389825")
+                        .build()
+                        .execute(new StringCallback() {
+                            @Override
+                            public void onError(Call call, Exception e, int id) {
+                                LogUtils.i("-------------- aaaa" + e.toString());
+
+                            }
+//
+                            @Override
+                            public void onResponse(String response, int id) {
+                                Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                                intent.putExtra("","");
+
+                                Type type = new TypeToken<Response<Goods>>() {
+                                }.getType();
+                                Response<Goods> goods = new Gson().fromJson(response, type);
+
+                                intent.putExtra("name", goods.getData().getName());
+                                intent.putExtra("type", goods.getData().getSortName());
+                                intent.putExtra("price", goods.getData().getPrice());
+                                intent.putExtra("details", goods.getData().getNote());
+                                intent.putExtra("sell", goods.getData().getSale());
+                                intent.putExtra("id", goods.getData().getId());
+                                intent.putExtra("img", MyApplication.baseUrl + "img/" + goods.getData().getImg());
+                                startActivity(intent);
+
+
+                            }
+                        });
+
+
+
+            }
+        });
+
 
         Banner banner = (Banner) view.findViewById(R.id.banner);
         //设置图片加载器

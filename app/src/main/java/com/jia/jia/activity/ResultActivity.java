@@ -67,7 +67,6 @@ public class ResultActivity extends AppCompatActivity {
                 intent.putExtra("id", String.valueOf(mList.get(position).getId()));
                 intent.putExtra("img", MyApplication.baseUrl + "img/" + mList.get(position).getImg());
                 startActivity(intent);
-
             }
         });
 

@@ -10,6 +10,16 @@ public class Order {
 
     private long id;
 
+    private long itemId;
+
+    public long getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(long itemId) {
+        this.itemId = itemId;
+    }
+
     public long getId() {
         return id;
     }

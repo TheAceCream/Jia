@@ -13,7 +13,7 @@ import com.blankj.utilcode.util.Utils;
 public class MyApplication extends Application {
 
 
-    public final static String baseUrl = "http://192.168.199.205:8080/";
+    public final static String baseUrl = "http://192.168.1.102:8080/";
 
     @Override
     public void onCreate() {

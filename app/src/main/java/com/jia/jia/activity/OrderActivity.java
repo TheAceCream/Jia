@@ -1,11 +1,18 @@
 package com.jia.jia.activity;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RatingBar;
 
 import com.blankj.utilcode.util.CacheUtils;
 import com.blankj.utilcode.util.LogUtils;
@@ -16,8 +23,7 @@ import com.google.gson.reflect.TypeToken;
 import com.jia.jia.MyApplication;
 import com.jia.jia.R;
 import com.jia.jia.adapter.OrderAdapter;
-import com.jia.jia.module.GetItem2;
-import com.jia.jia.module.Goods;
+import com.jia.jia.module.Evaluate;
 import com.jia.jia.module.Order;
 import com.jia.jia.module.Response;
 import com.jia.jia.module.User;
@@ -26,11 +32,9 @@ import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.MediaType;
-import okhttp3.Request;
 
 /**
  * Created by linSir
@@ -43,6 +47,8 @@ public class OrderActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private OrderAdapter mAdapter;
     private ArrayList<Order> mOrderList = new ArrayList<>();
+    private Dialog getCodeDialog;
+    public float pingfen = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,28 +62,39 @@ public class OrderActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(mAdapter);
 
+
         mAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                OkHttpUtils
-                        .get()
-                        .url(MyApplication.baseUrl + "order/changeOrderState.do")
-                        .addParams("orderId", String.valueOf(mOrderList.get(position).getId()))
-                        .addParams("state", "103")
-                        .build()
-                        .execute(new StringCallback() {
-                            @Override
-                            public void onError(Call call, Exception e, int id) {
-                                LogUtils.i("-------------- aaaa" + e.toString());
 
-                            }
 
-                            @Override
-                            public void onResponse(String response, int id) {
-                                LogUtils.i("-------------- aaaa" + response);
-                                initData();
-                            }
-                        });
+                if (mOrderList.get(position).getState() == 104) {
+
+                    showGetCodeDialog(OrderActivity.this, position);
+
+                } else if (mOrderList.get(position).getState() == 102) {
+                    OkHttpUtils
+                            .get()
+                            .url(MyApplication.baseUrl + "order/changeOrderState.do")
+                            .addParams("orderId", String.valueOf(mOrderList.get(position).getId()))
+                            .addParams("state", "104")
+                            .build()
+                            .execute(new StringCallback() {
+                                @Override
+                                public void onError(Call call, Exception e, int id) {
+                                    LogUtils.i("-------------- aaaa" + e.toString());
+
+                                }
+
+                                @Override
+                                public void onResponse(String response, int id) {
+                                    LogUtils.i("-------------- aaaa" + response);
+                                    initData();
+                                }
+                            });
+                }
+
+
             }
         });
 
@@ -86,7 +103,7 @@ public class OrderActivity extends AppCompatActivity {
 
     }
 
-    private void initData(){
+    private void initData() {
         OkHttpUtils
                 .postString()
                 .url(MyApplication.baseUrl + "/order/getOrderList.do")
@@ -120,6 +137,85 @@ public class OrderActivity extends AppCompatActivity {
                         mOrderList = response1.getData();
                     }
                 });
+
+    }
+
+
+    private void showGetCodeDialog(Context mContext, final int position) {
+
+        final AlertDialog.Builder builder2 = new AlertDialog.Builder(mContext);
+        View mView = LayoutInflater.from(mContext).inflate(R.layout.roting_bar, null);
+
+        RatingBar ratingBar = (RatingBar) mView.findViewById(R.id.bar);
+        final EditText editText = mView.findViewById(R.id.edit_text);
+        Button button = mView.findViewById(R.id.button);
+
+
+        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
+                pingfen = v;
+            }
+        });
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getCodeDialog.dismiss();
+
+                String userId = CacheUtils.getInstance().getString("userId");
+                long userId2 = Long.parseLong(userId);
+
+
+                OkHttpUtils
+                        .postString()
+                        .url(MyApplication.baseUrl + "/critic/addCritic.do")
+                        .content(new Gson().toJson(new Evaluate(mOrderList.get(position).getItemId(),
+                                userId2,
+                                pingfen, editText.getText().toString())))
+                        .mediaType(MediaType.parse("application/json; charset=utf-8"))
+                        .build()
+                        .execute(new StringCallback() {
+                            @Override
+                            public void onError(Call call, Exception e, int id) {
+                                ToastUtils.showShort("失败");
+                                LogUtils.i("失败" + e.toString());
+                            }
+
+                            @Override
+                            public void onResponse(String response, int id) {
+                                ToastUtils.showShort("评论成功");
+                                OkHttpUtils
+                                        .get()
+                                        .url(MyApplication.baseUrl + "order/changeOrderState.do")
+                                        .addParams("orderId", String.valueOf(mOrderList.get(position).getId()))
+                                        .addParams("state", "103")
+                                        .build()
+                                        .execute(new StringCallback() {
+                                            @Override
+                                            public void onError(Call call, Exception e, int id) {
+                                                LogUtils.i("-------------- aaaa" + e.toString());
+
+                                            }
+
+                                            @Override
+                                            public void onResponse(String response, int id) {
+                                                LogUtils.i("-------------- aaaa" + response);
+                                                initData();
+                                            }
+                                        });
+                                initData();
+                            }
+                        });
+
+
+            }
+        });
+
+        builder2.setView(mView);
+        builder2.setCancelable(false);
+        getCodeDialog = builder2.create();
+        getCodeDialog.show();
 
     }
 

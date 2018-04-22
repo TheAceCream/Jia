@@ -2,6 +2,7 @@ package com.jia.jia.adapter;
 
 import android.widget.ImageView;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -29,6 +30,10 @@ public class ShoppingCarAdapter extends BaseQuickAdapter<Goods, BaseViewHolder> 
         helper.addOnClickListener(R.id.add);
         helper.addOnClickListener(R.id.sub);
         // 加载网络图片
-        Glide.with(mContext).load(MyApplication.baseUrl + "img/" + item.getImg()).into((ImageView) helper.getView(R.id.img));
+
+        //LogUtils.e("---lin--->   img  " + item.getImg());
+
+
+        Glide.with(mContext).load(  item.getImg()).into((ImageView) helper.getView(R.id.img));
     }
 }

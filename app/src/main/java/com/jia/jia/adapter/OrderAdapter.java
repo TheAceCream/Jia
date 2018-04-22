@@ -18,10 +18,15 @@ public class OrderAdapter extends BaseQuickAdapter<Order, BaseViewHolder> {
 
     @Override
     protected void convert(BaseViewHolder helper, Order item) {
+
         helper.setText(R.id.name, item.getName());
         helper.setText(R.id.price, String.valueOf(item.getPrice()));
         helper.setText(R.id.other, String.valueOf(item.getOther()));
         helper.setText(R.id.count, String.valueOf(item.getCount()));
+        helper.addOnClickListener(R.id.take_it);
+
+
+
         switch (item.getState()) {
             case 101:
                 helper.setText(R.id.state, "已支付");
@@ -42,6 +47,15 @@ public class OrderAdapter extends BaseQuickAdapter<Order, BaseViewHolder> {
                 helper.setVisible(R.id.take_it, false);
 
                 break;
+
+            case 104:
+                helper.setVisible(R.id.state, false);
+                helper.setVisible(R.id.take_it, true);
+                helper.setText(R.id.take_it, "待评价");
+
+                break;
+
+
         }
 
     }

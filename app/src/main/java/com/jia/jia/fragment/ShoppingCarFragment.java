@@ -5,23 +5,22 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.blankj.utilcode.util.ActivityUtils;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.blankj.utilcode.util.CacheUtils;
 import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.ToastUtils;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.jia.jia.MyApplication;
 import com.jia.jia.R;
-import com.jia.jia.activity.MainActivity;
 import com.jia.jia.adapter.ShoppingCarAdapter;
 import com.jia.jia.module.Goods;
-import com.jia.jia.module.Response;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -46,6 +45,7 @@ public class ShoppingCarFragment extends Fragment {
     Gson gson = new Gson();
     private ShoppingCarAdapter mAdapter;
     protected boolean isCreate = false;
+    List<Goods> goods = new ArrayList<>();
 
     @Nullable
     @Override
@@ -59,7 +59,7 @@ public class ShoppingCarFragment extends Fragment {
 
         JSONArray array = CacheUtils.getInstance().getJSONArray("goods");
         if (array != null) {
-            List<Goods> goods = gson.fromJson(array.toString(),
+            goods = gson.fromJson(array.toString(),
                     new TypeToken<List<Goods>>() {
                     }.getType());
             mAdapter.setNewData(goods);
@@ -76,43 +76,93 @@ public class ShoppingCarFragment extends Fragment {
             }
         });
 
+        mAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                JSONArray array = CacheUtils.getInstance().getJSONArray("goods");
+                if (array != null) {
+                    goods = gson.fromJson(array.toString(),
+                            new TypeToken<List<Goods>>() {
+                            }.getType());
+                }
+                if (view.getId() == R.id.add) {
+
+                    goods.get(position).setCounts(goods.get(position).getCounts() + 1);
+
+                } else if (view.getId() == R.id.sub) {
+                    int c = goods.get(position).getCounts();
+                    if (c > 0) {
+                        c = c - 1;
+                    }
+                    goods.get(position).setCounts(c);
+
+                }
+
+                mAdapter.setNewData(goods);
+
+                CacheUtils.getInstance().put("goods", new Gson().toJson(goods));
+
+
+
+            }
+        });
+
         pay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 JSONArray array = CacheUtils.getInstance().getJSONArray("goods");
-                if (array != null) {
-                    List<Goods> goods = gson.fromJson(array.toString(),
-                            new TypeToken<List<Goods>>() {
-                            }.getType());
-
-                    for (int i = 0; i < goods.size(); i++) {
-
-
-
-                        OkHttpUtils
-                                .postString()
-                                .url(MyApplication.baseUrl + "/order/addOrder.do")
-                                .content(new Gson().toJson(goods.get(i)))
-                                .mediaType(MediaType.parse("application/json; charset=utf-8"))
-                                .build()
-                                .execute(new StringCallback() {
-                                    @Override
-                                    public void onError(Call call, Exception e, int id) {
-                                        LogUtils.i("失败" + e.toString());
-                                    }
-
-                                    @Override
-                                    public void onResponse(String response, int id) {
-                                        LogUtils.i("成功" + response.toString());
-
-
-
-                                    }
-                                });
-                    }
-                    CacheUtils.getInstance().put("goods", new JSONArray());
-                    mAdapter.setNewData(new ArrayList<Goods>());
+                if (array == null) {
+                    return;
                 }
+
+                new MaterialDialog.Builder(getActivity())
+                        .title("请输入地址")
+                        .content("地址:")
+                        .inputType(InputType.TYPE_CLASS_TEXT)
+                        .input("", "", new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(MaterialDialog dialog, CharSequence input) {
+                                // Do something
+
+                                JSONArray array = CacheUtils.getInstance().getJSONArray("goods");
+                                if (array != null) {
+                                    List<Goods> goods = gson.fromJson(array.toString(),
+                                            new TypeToken<List<Goods>>() {
+                                            }.getType());
+
+                                    for (int i = 0; i < goods.size(); i++) {
+
+                                        goods.get(i).setOther(input.toString());
+                                        OkHttpUtils
+                                                .postString()
+                                                .url(MyApplication.baseUrl + "/order/addOrder.do")
+                                                .content(new Gson().toJson(goods.get(i)))
+                                                .mediaType(MediaType.parse("application/json; charset=utf-8"))
+                                                .build()
+                                                .execute(new StringCallback() {
+                                                    @Override
+                                                    public void onError(Call call, Exception e, int id) {
+                                                        LogUtils.i("失败" + e.toString());
+                                                    }
+
+                                                    @Override
+                                                    public void onResponse(String response, int id) {
+                                                        LogUtils.i("成功" + response.toString());
+
+
+                                                    }
+                                                });
+                                    }
+                                    CacheUtils.getInstance().put("goods", new JSONArray());
+                                    mAdapter.setNewData(new ArrayList<Goods>());
+                                }
+
+
+                            }
+                        }).show();
+
+
             }
         });
 

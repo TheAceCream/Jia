@@ -65,8 +65,9 @@ public class DetailsActivity extends AppCompatActivity {
                     goods1.setPrice(Double.valueOf(getIntent().getExtras().getString("price")));
                     goods1.setState(101);
                     goods1.setOther("");
-                    goods1.setCounts(0);
+                    goods1.setCounts(1);
                     goods1.setUserId(Long.valueOf(CacheUtils.getInstance().getString("userId")));
+                    goods1.setImg(getIntent().getExtras().getString("img"));
                     goods1.setItemId(Long.valueOf(getIntent().getExtras().getString("id")));
                     goods.add(goods1);
                     CacheUtils.getInstance().put("goods", new Gson().toJson(goods));
@@ -101,6 +102,7 @@ public class DetailsActivity extends AppCompatActivity {
                         goods1.setOther("");
                         goods1.setCounts(1);
                         goods1.setUserId(Long.valueOf(CacheUtils.getInstance().getString("userId")));
+                        goods1.setImg(getIntent().getExtras().getString("img"));
 
                         goods1.setItemId(Long.valueOf(getIntent().getExtras().getString("id")));
                         goods.add(goods1);

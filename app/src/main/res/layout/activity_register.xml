@@ -13,11 +13,14 @@
         android:layout_marginTop="57dp"
         android:gravity="center">
 
-        <ImageView
+        <TextView
             android:layout_width="202dp"
             android:layout_height="75dp"
             android:contentDescription="@string/app_name"
-            android:background="#555"
+            android:text="电子设备商城"
+            android:gravity="center"
+            android:textColor="#000"
+            android:textSize="20sp"
             />
 
     </LinearLayout>
