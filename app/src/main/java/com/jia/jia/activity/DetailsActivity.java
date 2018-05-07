@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.blankj.utilcode.util.CacheUtils;
 import com.blankj.utilcode.util.LogUtils;
@@ -29,7 +30,7 @@ import java.util.List;
 
 public class DetailsActivity extends AppCompatActivity {
 
-    private TextView name, type, price, details, sell, button;
+    private TextView name, type, price, store , details, sell, star , button;
     private ImageView img;
 
     @Override
@@ -40,16 +41,21 @@ public class DetailsActivity extends AppCompatActivity {
         name = findViewById(R.id.name);
         type = findViewById(R.id.type);
         price = findViewById(R.id.price);
+        store = findViewById(R.id.store);
         details = findViewById(R.id.details);
         sell = findViewById(R.id.sell);
+        star = findViewById(R.id.star);
         button = findViewById(R.id.add_to_car);
         img = findViewById(R.id.img);
 
         name.setText(getIntent().getExtras().getString("name"));
         type.setText(getIntent().getExtras().getString("type"));
         price.setText(getIntent().getExtras().getString("price"));
+        store.setText(getIntent().getExtras().getString("store"));
         details.setText(getIntent().getExtras().getString("details"));
         sell.setText(getIntent().getExtras().getString("sell"));
+        star.setText(getIntent().getExtras().getString("star"));
+        Toast.makeText(DetailsActivity.this,getIntent().getExtras().getString("star"),Toast.LENGTH_LONG).show();
 
         Glide.with(this).load(getIntent().getExtras().getString("img")).into(img);
 

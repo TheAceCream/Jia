@@ -31,12 +31,23 @@
             android:background="#FFF"
             android:orientation="vertical">
 
+            <RadioButton
+                android:id="@+id/sort0"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:checked="true"
+                android:text="好评推荐" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#dfdfdf" />
+
 
             <RadioButton
                 android:id="@+id/sort1"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:checked="true"
                 android:text="手机" />
 
             <TextView

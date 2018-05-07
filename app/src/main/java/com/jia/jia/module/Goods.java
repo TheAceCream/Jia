@@ -11,6 +11,7 @@ public class Goods {
     private String img;
     private String title;
     private double price;
+    private double store;
     private int sale;
     private int sort;
     private long id;
@@ -22,6 +23,7 @@ public class Goods {
     private String other;
     private String name;
     private int state;
+    private double star;
 
     public int getState() {
         return state;
@@ -143,5 +145,21 @@ public class Goods {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public double getStore() {
+        return store;
+    }
+
+    public void setStore(double store) {
+        this.store = store;
+    }
+
+    public double getStar() {
+        return star;
+    }
+
+    public void setStar(double star) {
+        this.star = star;
     }
 }

@@ -40,7 +40,7 @@ import okhttp3.MediaType;
 
 public class SortFragment extends Fragment {
 
-    private RadioButton bt1, bt2, bt3, bt4, bt5, bt6, bt7;
+    private RadioButton bt0,bt1, bt2, bt3, bt4, bt5, bt6, bt7;
     private RecyclerView recyclerView;
     private GoodsAdapter mAdapter;
     private ArrayList<Goods> mList = new ArrayList<>();
@@ -49,6 +49,8 @@ public class SortFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sort, container, false);
+
+        bt0 = view.findViewById(R.id.sort0);
         bt1 = view.findViewById(R.id.sort1);
         bt2 = view.findViewById(R.id.sort2);
         bt3 = view.findViewById(R.id.sort3);
@@ -71,8 +73,10 @@ public class SortFragment extends Fragment {
                 intent.putExtra("name", mList.get(position).getName());
                 intent.putExtra("type", mList.get(position).getSortName());
                 intent.putExtra("price", String.valueOf(mList.get(position).getPrice()));
+                intent.putExtra("store", String.valueOf(mList.get(position).getStore()));
                 intent.putExtra("details", mList.get(position).getNote());
                 intent.putExtra("sell", String.valueOf(mList.get(position).getSale()));
+                intent.putExtra("star", String.valueOf(mList.get(position).getStar()));
                 intent.putExtra("id", String.valueOf(mList.get(position).getId()));
                 intent.putExtra("img", MyApplication.baseUrl + "img/" + mList.get(position).getImg());
                 startActivity(intent);
@@ -80,7 +84,14 @@ public class SortFragment extends Fragment {
         });
 
 
-        setIt(101);
+        getStarList();
+
+        bt0.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getStarList();
+            }
+        });
 
         bt1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,5 +183,40 @@ public class SortFragment extends Fragment {
                 });
     }
 
+    private void getStarList(){
+        OkHttpUtils
+                .postString()
+                .url(MyApplication.baseUrl + "/item/getItemListByStar.do")
+                .content("{}")
+                .mediaType(MediaType.parse("application/json; charset=utf-8"))
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        ToastUtils.showShort("失败");
+                        LogUtils.i("失败" + e.toString());
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        LogUtils.i("成功" + response.toString());
+                        Type listType = new TypeToken<Response<ArrayList<Goods>>>() {
+                        }.getType();
+                        Response<ArrayList<Goods>> response1 = new Gson().fromJson(response, listType);
+
+
+                        if (response1.getCode() == 0) {
+                            ToastUtils.showShort("成功");
+
+                        } else {
+                            ToastUtils.showShort("失败");
+
+                        }
+                        mList = response1.getData();
+                        mAdapter.setNewData(response1.getData());
+
+                    }
+                });
+    }
 
 }

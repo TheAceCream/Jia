@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import com.blankj.utilcode.util.LogUtils;
@@ -57,13 +58,15 @@ public class ResultActivity extends AppCompatActivity {
         mAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                //name, type, price, details, sell
+                //name, type, price, store ,details, sell, star
                 Intent intent = new Intent(ResultActivity.this, DetailsActivity.class);
                 intent.putExtra("name", mList.get(position).getName());
                 intent.putExtra("type", mList.get(position).getSortName());
                 intent.putExtra("price", String.valueOf(mList.get(position).getPrice()));
+                intent.putExtra("store", String.valueOf(mList.get(position).getStore()));
                 intent.putExtra("details", mList.get(position).getNote());
                 intent.putExtra("sell", String.valueOf(mList.get(position).getSale()));
+                intent.putExtra("star", String.valueOf(mList.get(position).getStar()));
                 intent.putExtra("id", String.valueOf(mList.get(position).getId()));
                 intent.putExtra("img", MyApplication.baseUrl + "img/" + mList.get(position).getImg());
                 startActivity(intent);
@@ -91,6 +94,8 @@ public class ResultActivity extends AppCompatActivity {
                         }.getType();
                         Response<ArrayList<Goods>> response1 = new Gson().fromJson(response, listType);
                         mList = response1.getData();
+
+                        LogUtils.i("成功!" + mList.toString());
 
                         if (response1.getCode() == 0) {
                             ToastUtils.showShort("成功");
