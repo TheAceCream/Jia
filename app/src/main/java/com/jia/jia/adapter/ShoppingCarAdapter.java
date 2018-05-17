@@ -11,7 +11,7 @@ import com.jia.jia.R;
 import com.jia.jia.module.Goods;
 
 /**
- * Created by linSir
+ * Created by ace
  * date at 2018/3/17.
  * describe:
  */
@@ -30,9 +30,6 @@ public class ShoppingCarAdapter extends BaseQuickAdapter<Goods, BaseViewHolder> 
         helper.addOnClickListener(R.id.add);
         helper.addOnClickListener(R.id.sub);
         // 加载网络图片
-
-        //LogUtils.e("---lin--->   img  " + item.getImg());
-
 
         Glide.with(mContext).load(  item.getImg()).into((ImageView) helper.getView(R.id.img));
     }

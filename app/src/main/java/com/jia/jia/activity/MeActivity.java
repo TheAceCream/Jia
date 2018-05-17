@@ -114,7 +114,6 @@ public class MeActivity extends AppCompatActivity {
             }
         });
 
-        LogUtils.i("-------------- cccc" + CacheUtils.getInstance().getString("userId"));
 
 
         OkHttpUtils
@@ -125,14 +124,11 @@ public class MeActivity extends AppCompatActivity {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        LogUtils.i("-------------- aaaa" + e.toString());
 
                     }
 
                     @Override
                     public void onResponse(String response, int id) {
-                        LogUtils.i("-------------- aaaabb" + response);
-
                         Type type = new TypeToken<Response<User>>() {
                         }.getType();
                         Response<User> response1 = new Gson().fromJson(response, type);

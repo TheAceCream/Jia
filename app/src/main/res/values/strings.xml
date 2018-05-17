@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Jia</string>
+    <string name="app_name">电子商城系统</string>
     <string name="please_input_phone">请输入用户名</string>
     <string name="phone">用户名</string>
     <string name="auth_code">验证码</string>

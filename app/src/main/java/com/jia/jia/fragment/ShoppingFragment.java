@@ -45,6 +45,8 @@ public class ShoppingFragment extends Fragment {
     private ImageView search;
     private EditText editText;
     private ImageView imageView1;
+    private ImageView imageView2;
+    private ImageView imageView3;
 
     @Nullable
     @Override
@@ -55,6 +57,8 @@ public class ShoppingFragment extends Fragment {
         editText = view.findViewById(R.id.edit_text);
         search = view.findViewById(R.id.search);
         imageView1 = view.findViewById(R.id.image_view1);
+        imageView2 = view.findViewById(R.id.image_view2);
+        imageView3 = view.findViewById(R.id.image_view3);
 
 
         search.setOnClickListener(new View.OnClickListener() {
@@ -69,8 +73,6 @@ public class ShoppingFragment extends Fragment {
         imageView1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
                 OkHttpUtils
                         .get()
                         .url(MyApplication.baseUrl + "item/getItemDetail.do")
@@ -79,43 +81,107 @@ public class ShoppingFragment extends Fragment {
                         .execute(new StringCallback() {
                             @Override
                             public void onError(Call call, Exception e, int id) {
-                                LogUtils.i("-------------- aaaa" + e.toString());
 
                             }
-//
+                            //
                             @Override
                             public void onResponse(String response, int id) {
                                 Intent intent = new Intent(getActivity(), DetailsActivity.class);
-                                intent.putExtra("","");
-
-                                Type type = new TypeToken<Response<Goods>>() {
-                                }.getType();
+//                                intent.putExtra("","");
+                                Type type = new TypeToken<Response<Goods>>() {}.getType();
                                 Response<Goods> goods = new Gson().fromJson(response, type);
-
-                                intent.putExtra("name", goods.getData().getName());
-                                intent.putExtra("type", goods.getData().getSortName());
-                                intent.putExtra("price", goods.getData().getPrice());
-                                intent.putExtra("details", goods.getData().getNote());
-                                intent.putExtra("sell", goods.getData().getSale());
-                                intent.putExtra("id", goods.getData().getId());
+                                Goods good = goods.getData();
+                                intent.putExtra("id",good.getId()+"");
+                                intent.putExtra("name", good.getName());
+                                intent.putExtra("type", good.getSortName());
+                                intent.putExtra("price", good.getPrice()+"");
+                                intent.putExtra("store",good.getStore()+"");
+                                intent.putExtra("details", good.getNote());
+                                intent.putExtra("sell", good.getSale()+"");
+                                intent.putExtra("star", good.getStar()+"");
                                 intent.putExtra("img", MyApplication.baseUrl + "img/" + goods.getData().getImg());
                                 startActivity(intent);
-
-
                             }
                         });
-
-
-
             }
         });
 
+        imageView2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                OkHttpUtils
+                        .get()
+                        .url(MyApplication.baseUrl + "item/getItemDetail.do")
+                        .addParams("itemId", "2259990083656064")
+                        .build()
+                        .execute(new StringCallback() {
+                            @Override
+                            public void onError(Call call, Exception e, int id) {
+
+                            }
+                            //
+                            @Override
+                            public void onResponse(String response, int id) {
+                                Intent intent = new Intent(getActivity(), DetailsActivity.class);
+//                                intent.putExtra("","");
+                                Type type = new TypeToken<Response<Goods>>() {}.getType();
+                                Response<Goods> goods = new Gson().fromJson(response, type);
+                                Goods good = goods.getData();
+                                intent.putExtra("id",good.getId()+"");
+                                intent.putExtra("name", good.getName());
+                                intent.putExtra("type", good.getSortName());
+                                intent.putExtra("price", good.getPrice()+"");
+                                intent.putExtra("store",good.getStore()+"");
+                                intent.putExtra("details", good.getNote());
+                                intent.putExtra("sell", good.getSale()+"");
+                                intent.putExtra("star", good.getStar()+"");
+                                intent.putExtra("img", MyApplication.baseUrl + "img/" + goods.getData().getImg());
+                                startActivity(intent);
+                            }
+                        });
+            }
+        });
+
+        imageView3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                OkHttpUtils
+                        .get()
+                        .url(MyApplication.baseUrl + "item/getItemDetail.do")
+                        .addParams("itemId", "2260078869092736")
+                        .build()
+                        .execute(new StringCallback() {
+                            @Override
+                            public void onError(Call call, Exception e, int id) {
+
+                            }
+                            //
+                            @Override
+                            public void onResponse(String response, int id) {
+                                Intent intent = new Intent(getActivity(), DetailsActivity.class);
+//                                intent.putExtra("","");
+                                Type type = new TypeToken<Response<Goods>>() {}.getType();
+                                Response<Goods> goods = new Gson().fromJson(response, type);
+                                Goods good = goods.getData();
+                                intent.putExtra("id",good.getId()+"");
+                                intent.putExtra("name", good.getName());
+                                intent.putExtra("type", good.getSortName());
+                                intent.putExtra("price", good.getPrice()+"");
+                                intent.putExtra("store",good.getStore()+"");
+                                intent.putExtra("details", good.getNote());
+                                intent.putExtra("sell", good.getSale()+"");
+                                intent.putExtra("star", good.getStar()+"");
+                                intent.putExtra("img", MyApplication.baseUrl + "img/" + goods.getData().getImg());
+                                startActivity(intent);
+                            }
+                        });
+            }
+        });
 
         Banner banner = (Banner) view.findViewById(R.id.banner);
         //设置图片加载器
         banner.setImageLoader(new GlideImageLoader());
         //设置图片集合
-        //Integer[] images = {R.mipmap.img1, R.mipmap.img2, R.mipmap.img3};
         List<Integer> images = new ArrayList<>();
         images.add(R.mipmap.img1);
         images.add(R.mipmap.img2);

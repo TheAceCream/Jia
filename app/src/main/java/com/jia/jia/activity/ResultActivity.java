@@ -17,6 +17,7 @@ import com.google.gson.reflect.TypeToken;
 import com.jia.jia.MyApplication;
 import com.jia.jia.R;
 import com.jia.jia.adapter.GoodsAdapter;
+import com.jia.jia.module.Critics;
 import com.jia.jia.module.GetItem2;
 import com.jia.jia.module.Goods;
 import com.jia.jia.module.Response;
@@ -41,6 +42,7 @@ public class ResultActivity extends AppCompatActivity {
     private GoodsAdapter mAdapter;
     private String searchText;
     private ArrayList<Goods> mList = new ArrayList<>();
+    private ArrayList<Critics> cList = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,6 +79,42 @@ public class ResultActivity extends AppCompatActivity {
         OkHttpUtils
                 .postString()
                 .url(MyApplication.baseUrl + "/item/getItemList.do")
+                .content(new Gson().toJson(new GetItem2(searchText)))
+                .mediaType(MediaType.parse("application/json; charset=utf-8"))
+                .build()
+                .execute(new StringCallback() {
+                    @Override
+                    public void onError(Call call, Exception e, int id) {
+                        ToastUtils.showShort("失败");
+                        LogUtils.i("失败" + e.toString());
+                    }
+
+                    @Override
+                    public void onResponse(String response, int id) {
+                        LogUtils.i("成功" + response.toString());
+                        Type listType = new TypeToken<Response<ArrayList<Goods>>>() {
+                        }.getType();
+                        Response<ArrayList<Goods>> response1 = new Gson().fromJson(response, listType);
+                        mList = response1.getData();
+
+                        LogUtils.i("成功!" + mList.toString());
+
+                        if (response1.getCode() == 0) {
+                            ToastUtils.showShort("成功");
+
+                        } else {
+                            ToastUtils.showShort("失败");
+
+                        }
+
+                        mAdapter.setNewData(response1.getData());
+
+                    }
+                });
+
+        OkHttpUtils
+                .postString()
+                .url(MyApplication.baseUrl + "/critic/getCriticList.do")
                 .content(new Gson().toJson(new GetItem2(searchText)))
                 .mediaType(MediaType.parse("application/json; charset=utf-8"))
                 .build()

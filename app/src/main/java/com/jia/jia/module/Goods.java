@@ -25,6 +25,7 @@ public class Goods {
     private int state;
     private double star;
 
+
     public int getState() {
         return state;
     }
@@ -161,5 +162,27 @@ public class Goods {
 
     public void setStar(double star) {
         this.star = star;
+    }
+
+    @Override
+    public String toString() {
+        return "Goods{" +
+                "img='" + img + '\'' +
+                ", title='" + title + '\'' +
+                ", price=" + price +
+                ", store=" + store +
+                ", sale=" + sale +
+                ", sort=" + sort +
+                ", id=" + id +
+                ", note='" + note + '\'' +
+                ", sortName='" + sortName + '\'' +
+                ", itemId=" + itemId +
+                ", userId=" + userId +
+                ", counts=" + counts +
+                ", other='" + other + '\'' +
+                ", name='" + name + '\'' +
+                ", state=" + state +
+                ", star=" + star +
+                '}';
     }
 }
